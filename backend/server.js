@@ -31,11 +31,11 @@ app.use(cors({
         
         const cleanOrigin = origin.trim().toLowerCase().replace(/\/$/, '');
         
-        if (allowedOrigins.indexOf(cleanOrigin) !== -1 || allowedOrigins.includes('*')) {
+        if (allowedOrigins.indexOf(cleanOrigin) !== -1 || allowedOrigins.includes('*') || cleanOrigin.endsWith('.onrender.com')) {
             callback(null, true);
         } else {
             console.warn(`CORS Rejected for origin: ${origin}`);
-            callback(new Error('Not allowed by CORS'));
+            callback(null, false);
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
