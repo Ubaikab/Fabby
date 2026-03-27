@@ -21,16 +21,20 @@ app.use(express.json());
 
 // CORS configuration - handles all subdomains and localhost
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
-    ? process.env.ALLOWED_ORIGINS.split(',') 
+    ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim().toLowerCase().replace(/\/$/, '')) 
     : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:4000'];
 
 app.use(cors({
     origin: (origin, callback) => {
         // allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+        
+        const cleanOrigin = origin.trim().toLowerCase().replace(/\/$/, '');
+        
+        if (allowedOrigins.indexOf(cleanOrigin) !== -1 || allowedOrigins.includes('*')) {
             callback(null, true);
         } else {
+            console.warn(`CORS Rejected for origin: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
