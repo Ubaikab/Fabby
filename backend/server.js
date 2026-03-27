@@ -13,8 +13,6 @@ import orderRouter from './routes/orderRoute.js';
 // App Config
 const app = express();
 const port = process.env.PORT || 4000;
-connectDB().catch(err => console.error("Database Connection Error:", err));
-connectCloudinary();
 
 // Middleware
 app.use(express.json());
@@ -54,4 +52,15 @@ app.get('/',(req,res)=>{
     res.send("API Working");
 })
 
-app.listen(port, () => console.log('Server started on PORT : '+ port));
+const startServer = async () => {
+    try {
+        await connectDB();
+        connectCloudinary();
+        app.listen(port, () => console.log('Server started on PORT : ' + port));
+    } catch (error) {
+        console.error("Critical Server Startup Failure:", error);
+        process.exit(1);
+    }
+}
+
+startServer();
